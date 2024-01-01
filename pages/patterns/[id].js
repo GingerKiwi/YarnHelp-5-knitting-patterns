@@ -1,7 +1,7 @@
 import { Client } from "@notionhq/client";
 
-const Pattern = () => {
-  return <h1>Pattern List</h1>;
+const Pattern = ({ pattern }) => {
+  return <pre>{JSON.stringify(pattern, null, 2)}</pre>;
 };
 
 export const getStaticPaths = async () => {
@@ -29,8 +29,25 @@ export const getStaticPaths = async () => {
   }
 };
 
-export const getStaticProps = async () => {
+export const getStaticProps = async ({ params: { id }}) => {
   // fetch details for knitting patterns
+  const notion = new Client({
+    auth: process.env.NOTION_SECRET
+  });
+
+const page = await notion.pages.retrieve({
+    page_id: id,
+  });
+  
+  const title = page.properties.title.title[0].plain_text;
+  const supplies = [];
+  const instructions = [];
+
+  return {
+    props: {
+      pattern: title,
+    }
+  }
 }
 
 export default Pattern;
@@ -86,7 +103,7 @@ export default Pattern;
 //         block_id: await id,
 //     });
     
-//     const title = page.properties.title.title[0].plain_text;
+//     const title = page.properties.title.title[0].text;
 //     const supplies = [];
 //     const instructions = [];
 
