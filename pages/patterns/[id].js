@@ -38,6 +38,10 @@ export const getStaticProps = async ({ params: { id }}) => {
 const page = await notion.pages.retrieve({
     page_id: id,
   });
+
+  const blocks = await notion.blocks.children.list({ 
+    block_id: id 
+  });
   
   const title = page.properties.title.title[0].plain_text;
   const supplies = [];
